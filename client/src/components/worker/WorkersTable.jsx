@@ -16,12 +16,12 @@ import { useWorkerInlineEdit } from "../../hooks/useWorkerInlineEdit";
 import { JOBS_OPTIONS } from "../../constants/JOBS_OPTIONS";
 
 export default function WorkersTable() {
-  // חיפוש + פילטר (debounced לחיפוש צד שרת)
+  // Search + Filter (debounced for server-side search)
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const debouncedQ = useDebouncedValue(query, 400);
 
-  // נתונים מהשרת (מחזיר workers + setData לאופטימיות/רולבק)
+  // Data from the server (returns workers + setData for optimism/rollback)
   const { workers, loading, error, setData } = useWorkers({
     filter,
     q: debouncedQ,
@@ -40,17 +40,17 @@ export default function WorkersTable() {
     saveEdit,
   } = useWorkerInlineEdit({ workers, setData });
 
-  // פונקציה חדשה לשמירה + שליחת אירוע עדכון לגרף
+  // Save + notify chart
   const handleSave = async () => {
     try {
-      await saveEdit(); // שמירה לשרת (כבר קיים בלוגיקה שלך)
-      window.dispatchEvent(new Event("workers:changed")); // שליחת אירוע רענון לגרף
+      await saveEdit();
+      window.dispatchEvent(new Event("workers:changed"));
     } catch (e) {
       console.error("Save failed", e);
     }
   };
 
-  // תיאור שדות → columns
+  // fields → columns
   const fields = useMemo(
     () => [
       { id: "workerId", label: "מס' עובד", width: 120, type: "text", disabledInEdit: true },
@@ -62,11 +62,10 @@ export default function WorkersTable() {
     []
   );
 
-  // Renderer כללי לשדה: תומך text/select במצב עריכה
+  // General renderer for field: supports text/select in edit mode
   const renderCell = (row, f) => {
-    if (editingId !== row.id) {
-      return row[f.id];
-    }
+    if (editingId !== row.id) return row[f.id];
+
     if (f.type === "select") {
       return (
         <TextField
@@ -86,6 +85,7 @@ export default function WorkersTable() {
         </TextField>
       );
     }
+
     return (
       <TextField
         value={draft[f.id] ?? ""}
@@ -98,7 +98,7 @@ export default function WorkersTable() {
     );
   };
 
-  // columns לטבלת הבסיס
+  // columns for base table
   const columns = useMemo(() => {
     const fieldColumns = fields.map((f) => ({
       id: f.id,
@@ -128,7 +128,7 @@ export default function WorkersTable() {
         ),
     };
     return [...fieldColumns, actionsCol];
-  }, [fields, editingId, draft, saving]);
+  }, [fields, editingId, draft, saving]); // draft שומר על רנדר בזמן עריכה
 
   if (loading) {
     return <CircularProgress sx={{ mt: 6, mx: "auto", display: "block" }} />;

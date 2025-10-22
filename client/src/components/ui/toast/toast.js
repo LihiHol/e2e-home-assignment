@@ -1,4 +1,3 @@
-// src/components/ui/toast/toast.js
 import { enqueueSnackbar } from "notistack";
 /**
  * Generic toast utility using notistack.

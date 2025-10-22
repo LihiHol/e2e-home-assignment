@@ -1,4 +1,3 @@
-# app/db/repositories/workers_repository.py
 from typing import Any, Dict, Iterable, Optional, List
 from bson import ObjectId
 from pymongo.collection import Collection

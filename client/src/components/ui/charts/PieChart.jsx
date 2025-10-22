@@ -2,9 +2,7 @@ import React from "react";
 import { PieChart as MuiPieChart } from "@mui/x-charts/PieChart";
 import { Typography, CircularProgress } from "@mui/material";
 
-/**
- * UI Component - מציג גרף לפי נתונים שמתקבלים כ־props
- */
+
 export default function PieChart({ data, loading, error }) {
   if (loading)
     return <CircularProgress sx={{ display: "block", mx: "auto", my: 4 }} />;

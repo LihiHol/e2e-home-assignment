@@ -12,18 +12,6 @@ import BaseTableHead from "./BaseTableHead";
 import BaseTableRow from "./BaseTableRow";
 
 /**
- * ColumnDef:
- * {
- *   id: string,
- *   header: string,
- *   accessor: string | (row)=>any,
- *   align?: "left"|"center"|"right",
- *   width?: number|string,
- *   render?: (row)=>ReactNode, // אופציונלי: רינדור מותאם לכל תא
- * }
- */
-
-/**
  * @param {{
  *  columns: any[],
  *  rows: any[],

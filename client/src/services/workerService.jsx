@@ -1,6 +1,5 @@
 import api from "./api";
 
-// ממיר snake_case -> camelCase עבור ה־UI
 const mapWorker = (w) => ({
     id: w.id,
     workerId: w.workerId,
@@ -8,12 +7,11 @@ const mapWorker = (w) => ({
     job: w.job,
     phone: w.phone ?? "",
     address: w.address ?? "",
-    createdAt: w.created_at,            // שרת מחזיר created_at
-    updatedAt: w.updated_at ?? null,    // שרת מחזיר updated_at
+    createdAt: w.created_at,
+    updatedAt: w.updated_at ?? null,
 });
 
 export const workerService = {
-    // תואם ל-GET /workers?q=&page=&limit=
     async getAll(params = {}) {
         const { data } = await api.get("/workers", { params });
         return data.map(mapWorker);
@@ -34,21 +32,19 @@ export const workerService = {
         ];
     },
 
-    // POST /workers   (שימי לב ל-workerId מספרי)
     async create(payload) {
         const body = {
             workerId: Number(payload.workerId),
             name: payload.name?.trim(),
             job: payload.job,
             phone: payload.phone?.trim() || undefined,
-            address: (payload.address ?? payload.adress)?.trim() || undefined, // תומך בטעות כתיב אם קיימת בטופס
+            address: (payload.address ?? payload.adress)?.trim() || undefined,
             password: payload.password || undefined,
         };
         const { data } = await api.post("/workers", body);
         return mapWorker(data);
     },
 
-    // PATCH /workers/{id}  (עדכון חלקי – תואם ל-service בצד השרת)
     async update(id, partial) {
         const patch = {
             ...(partial.name !== undefined ? { name: partial.name } : {}),

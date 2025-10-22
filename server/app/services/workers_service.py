@@ -1,4 +1,3 @@
-# app/services/workers_service.py
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from bson import ObjectId
@@ -122,7 +121,6 @@ class WorkersService:
         Aggregate counts by job and map to ChartOut
         """
         counts = self.repo.jobs_counts_by_job()
-        # התאימי אם ה-jobs שלך בעברית/מפתחות אחרים
         return ChartOut(
             managers_number=counts.get("manager", 0),
             technicians_number=counts.get("technician", 0),

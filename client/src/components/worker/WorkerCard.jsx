@@ -33,8 +33,8 @@ export default function WorkerCard({ workerId, onDelete }) {
 
   const save = async () => {
     const updated = await workerService.update(local.id, draft);
-    setLocal(updated);                  // עדכון מיידי בכרטיס
-    window.dispatchEvent(new Event("workers:changed")); // רענון גרפים/רשימות בחוץ
+    setLocal(updated);                  // Updated immediately in the card
+    window.dispatchEvent(new Event("workers:changed")); // Refresh graphs/lists outside
     setEditing(false);
   };
 

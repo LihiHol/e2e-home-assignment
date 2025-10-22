@@ -5,25 +5,25 @@ import { useApiQuery } from "../hooks/useApiQuery";
 import { workerService } from "../services/workerService";
 
 export default function WorkerCardPage() {
-  // טוענים את רשימת העובדים ומקבלים setData לעדכון אופטימיסטי
+  // Load the employee list and get setData for optimistic update
   const { data: workers = [], loading, error, setData /*, refetch */ } =
     useApiQuery(() => workerService.getAll(), []);
 
-  // כשלוחצים "שמירה" בכרטיס (Inline Edit), הכרטיס קורא onEdited(updated)
+  // When you click "Save" on a card (Inline Edit), the card calls onEdited(updated)
   const handleEdited = (updatedWorker) => {
     setData((prev = []) => prev.map((w) => (w.id === updatedWorker.id ? updatedWorker : w)));
-    // אם יש גרף תלוי-תפקיד — נעדכן גם אותו
+    // If there is a role-dependent graph — update that too
     window.dispatchEvent(new Event("workers:changed"));
-    // לחלופין: אפשר refetch() במקום setData, אם מעדיפים למשוך מחדש
+    // Alternatively: use refetch() instead of setData, if you prefer to re-fetch
   };
 
-  // מחיקה מתוך הכרטיס
+  // Delete from the card
   const handleDelete = async (worker) => {
     try {
-      await workerService.remove(worker.id); // מחיקה בשרת
-      setData((prev = []) => prev.filter((w) => w.id !== worker.id)); // עדכון אופטימיסטי
+      await workerService.remove(worker.id); // Delete in the server
+      setData((prev = []) => prev.filter((w) => w.id !== worker.id)); // Optimistic update
       window.dispatchEvent(new Event("workers:changed"));
-      // לחלופין: await refetch();
+      // or: await refetch();
     } catch (e) {
       console.error("Delete failed", e);
     }
@@ -50,8 +50,8 @@ export default function WorkerCardPage() {
           <Grid item xs={12} sm={6} md={4} key={w.id}>
             <WorkerCard
               workerId={w.id}
-              onEdited={handleEdited}   // ⬅️ כרטיס יעביר Worker מעודכן אחרי Save
-              onDelete={handleDelete}   // ⬅️ כרטיס יקרא למחיקה
+              onEdited={handleEdited}
+              onDelete={handleDelete}
             />
           </Grid>
         ))}
