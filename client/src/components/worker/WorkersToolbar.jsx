@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import SearchInput from "../ui/inputs/SearchInput";
-import WorkersFilter from "./WorkersFilter";
+import WorkersFilter from "../ui/filter/WorkersFilter";
 
 /**
  * UI-only toolbar: search + filter

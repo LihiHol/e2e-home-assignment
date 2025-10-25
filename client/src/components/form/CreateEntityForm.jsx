@@ -5,6 +5,7 @@ import { enqueueSnackbar } from "notistack";
 import FormTextField from "./FormTextField";
 import FormSelectField from "./FormSelectField";
 import CustomPrimaryButton from "../ui/buttons/CustomPrimaryButton";
+import { useWorkers } from "../../context/WorkerContext";
 
 /**
  * @typedef {import("../../types/forms").IFormField} IFormField
@@ -29,6 +30,8 @@ export default function CreateEntityForm({
   defaultValues,
   toolbar,
 }) {
+
+  const { createWorker } = useWorkers();
   const methods = useForm({ defaultValues });
   const {
     handleSubmit,
@@ -38,8 +41,14 @@ export default function CreateEntityForm({
 
   const onSubmit = async (formData) => {
     try {
-      await apiService(formData);
-      enqueueSnackbar(successMessage, { variant: "success" });
+      // אם יש apiService – נשתמש בו, אחרת בקונטקסט
+      if (apiService) {
+        await apiService(formData);
+      } else {
+        await createWorker(formData); // ⬅️ קריאה דרך הקונטקסט
+      }
+
+      enqueueSnackbar(successMessage || "נשמר בהצלחה", { variant: "success" });
       reset();
       handleCloseDialog(false);
     } catch (error) {
@@ -47,6 +56,18 @@ export default function CreateEntityForm({
       enqueueSnackbar("אירעה שגיאה במהלך השמירה", { variant: "error" });
     }
   };
+  // const onSubmit = async (formData) => {
+  //   try {
+  //     await apiService(formData);
+  //     enqueueSnackbar(successMessage, { variant: "success" });
+  //     reset();
+  //     handleCloseDialog(false);
+  //   } catch (error) {
+  //     console.error("Error while creating entity:", error);
+  //     enqueueSnackbar("אירעה שגיאה במהלך השמירה", { variant: "error" });
+  //   }
+  // };
+
 
   return (
     <FormProvider {...methods}>

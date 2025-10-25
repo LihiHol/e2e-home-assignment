@@ -33,23 +33,42 @@ class WorkersService:
         try:
             inserted_id = self.repo.insert(doc)
         except DuplicateKeyError:
-            raise HTTPException(status_code=400, detail="Worker with this workerId already exists.")
+            raise HTTPException(
+                status_code=400, detail="Worker with this workerId already exists.")
         created = self.repo.get(inserted_id)
         if not created:
-            raise HTTPException(status_code=500, detail="Failed to fetch created worker")
+            raise HTTPException(
+                status_code=500, detail="Failed to fetch created worker")
         return self.to_out(created)
 
-    def list(self, q: Optional[str], skip: int, limit: int) -> List[WorkerOut]:
+    # def list(self, q: Optional[str], skip: int, limit: int) -> List[WorkerOut]:
+    #     query: Dict[str, Any] = {}
+    #     if q:
+    #         query = {"$or": [
+    #             {"name": {"$regex": q, "$options": "i"}},
+    #             {"job": {"$regex": q, "$options": "i"}},
+    #             {"phone": {"$regex": q, "$options": "i"}},
+    #             {"address": {"$regex": q, "$options": "i"}},
+    #         ]}
+    #     docs = self.repo.list(query, skip, limit)
+    #     return [self.to_out(d) for d in docs]
+    # services/workers_service.py
+
+
+    def list(self, q: Optional[str], filter: Optional[str], skip: int, limit: int) -> List[WorkerOut]:
         query: Dict[str, Any] = {}
         if q:
-            query = {"$or": [
+            query["$or"] = [
                 {"name": {"$regex": q, "$options": "i"}},
                 {"job": {"$regex": q, "$options": "i"}},
                 {"phone": {"$regex": q, "$options": "i"}},
                 {"address": {"$regex": q, "$options": "i"}},
-            ]}
+            ]
+        if filter and filter != "all":
+            query["job"] = filter
         docs = self.repo.list(query, skip, limit)
         return [self.to_out(d) for d in docs]
+
 
     def get(self, id_str: str) -> WorkerOut:
         try:
@@ -80,7 +99,8 @@ class WorkersService:
             raise HTTPException(status_code=404, detail="Worker not found")
         updated = self.repo.get(_id)
         if not updated:
-            raise HTTPException(status_code=500, detail="Failed to fetch updated worker")
+            raise HTTPException(
+                status_code=500, detail="Failed to fetch updated worker")
         return self.to_out(updated)
 
     def update(self, id_str: str, payload: WorkerUpdate) -> WorkerOut:
@@ -89,7 +109,8 @@ class WorkersService:
         except Exception:
             raise HTTPException(status_code=400, detail="Invalid worker id")
 
-        partial = {k: v for k, v in payload.model_dump().items() if v is not None}
+        partial = {k: v for k, v in payload.model_dump().items()
+                   if v is not None}
         if not partial:
             doc = self.repo.get(_id)
             if not doc:
@@ -103,7 +124,8 @@ class WorkersService:
 
         updated = self.repo.get(_id)
         if not updated:
-            raise HTTPException(status_code=500, detail="Failed to fetch updated worker")
+            raise HTTPException(
+                status_code=500, detail="Failed to fetch updated worker")
         return self.to_out(updated)
 
     def delete(self, id_str: str) -> None:

@@ -12,11 +12,15 @@ def create_worker(payload: WorkerIn):
     return svc.create(payload)
 
 
-@router.get("/", response_model=list[WorkerOut])
-def list_workers(q: str | None = None, page: int = 1, limit: int = 10):
-    limit, skip = parse_pagination(limit, page)
-    return svc.list(q, skip, limit)
+# @router.get("/", response_model=list[WorkerOut])
+# def list_workers(q: str | None = None, page: int = 1, limit: int = 10):
+#     limit, skip = parse_pagination(limit, page)
+#     return svc.list(q, skip, limit)
 
+@router.get("/", response_model=list[WorkerOut])
+def list_workers(q: str | None = None, filter: str | None = None, page: int = 1, limit: int = 10):
+    limit, skip = parse_pagination(limit, page)
+    return svc.list(q, filter, skip, limit)
 
 @router.get("/chart", response_model=ChartOut)
 def chart_number_of_jobs():

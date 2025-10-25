@@ -15,14 +15,17 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { SnackbarProvider } from "notistack";
 import { ThemeModeProvider } from "./context/ThemeContext";
+import { WorkerProvider } from "./context/WorkerContext"; // ⬅️ חדש
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeModeProvider>
-    <SnackbarProvider
-      maxSnack={3}
-      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-    >
-      <App />
-    </SnackbarProvider>
+    <WorkerProvider>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <App />
+      </SnackbarProvider>
+    </WorkerProvider>
   </ThemeModeProvider>
 );

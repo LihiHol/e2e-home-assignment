@@ -10,7 +10,7 @@ from typing import Optional
 #     address: Optional[str] = None
 #     password: Optional[str] = None
 
-
+# input for update or create 
 class WorkerIn(BaseModel):
     workerId: int = Field(..., ge=1)
     name: str
@@ -20,7 +20,7 @@ class WorkerIn(BaseModel):
         default=None, validation_alias=AliasChoices("address", "adress"))
     password: Optional[str] = None
 
-
+# for partial updates 
 class WorkerUpdate(BaseModel):
     name: Optional[str] = None
     job: Optional[str] = None
@@ -28,7 +28,7 @@ class WorkerUpdate(BaseModel):
     address: Optional[str] = None
     password: Optional[str] = None
 
-
+#output which returns to the client
 class WorkerOut(BaseModel):
     id: str
     workerId: int
@@ -39,6 +39,7 @@ class WorkerOut(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
+#output which returns to the client
 class ChartOut(BaseModel):
     managers_number: int
     technicians_number: int
