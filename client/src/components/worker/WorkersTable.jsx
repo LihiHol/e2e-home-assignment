@@ -160,7 +160,6 @@
 //   );
 // }
 
-// src/features/workers/WorkersTable.jsx
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   CircularProgress,
@@ -173,7 +172,7 @@ import { Edit, Save, Close } from "@mui/icons-material";
 
 import BaseTable from "../../components/ui/table/BaseTable";
 import WorkersToolbar from "./WorkersToolbar";
-import { useWorkers } from "../../context/WorkerContext"; // ← שימוש בקונטקסט
+import { useWorkers } from "../../context/WorkerContext"; 
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useWorkerInlineEdit } from "../../hooks/useWorkerInlineEdit";
 import { JOBS_OPTIONS } from "../../constants/JOBS_OPTIONS";
@@ -183,11 +182,10 @@ export default function WorkersTable() {
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const debouncedQ = useDebouncedValue(query, 400);
-
-  // מהקונטקסט
+  //from context
   const { workers, loading, error, loadWorkers, updateWorker } = useWorkers();
 
-  // Inline Edit (נשמר כמו אצלך)
+  // Inline Edit
   const noopSetData = () => {};
   const {
     editingId,
@@ -198,8 +196,7 @@ export default function WorkersTable() {
     onDraftChange,
   } = useWorkerInlineEdit({ workers, setData: noopSetData });
 
-  // ⚠️ יציבות: ה־effect לא תלוי ב־loadWorkers (שיכול להשתנות בזיכרון),
-  // רק בפרמטרים של השאילתה. זה מונע לולאת רינדור/טעינות חוזרות.
+  
   useEffect(() => {
     loadWorkers?.({ filter, q: debouncedQ, page: 1, limit: 10 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -210,14 +207,13 @@ export default function WorkersTable() {
     try {
       await updateWorker(editingId, draft);
       cancelEdit();
-      // אם יש לך מאזינים חיצוניים, אפשר להשאיר:
       // window.dispatchEvent(new Event("workers:changed"));
     } catch (e) {
       console.error("Save failed", e);
     }
   };
 
-  // fields (כמו שהיה)
+  // fields 
   const fields = useMemo(
     () => [
       { id: "workerId", label: "מס' עובד", width: 120, type: "text", disabledInEdit: true },
@@ -229,7 +225,6 @@ export default function WorkersTable() {
     []
   );
 
-  // ✅ מייצבים את פונקציית הרינדור לתא (תלויה רק במה שחייב)
   const renderCell = useCallback((row, f) => {
     if (editingId !== row.id) return row[f.id];
 
@@ -265,7 +260,6 @@ export default function WorkersTable() {
     );
   }, [editingId, draft, onDraftChange]);
 
-  // ✅ columns יציב: לא תלוי ב־draft ישירות (שהוא משתנה בכל הקלדה)
   const columns = useMemo(() => {
     const fieldColumns = fields.map((f) => ({
       id: f.id,
@@ -297,8 +291,6 @@ export default function WorkersTable() {
     return [...fieldColumns, actionsCol];
   }, [fields, renderCell, editingId, saving, cancelEdit, startEdit, handleSave]);
 
-  // ❌ לא מחליפים את כל הטבלה בספינר (זה יוצר קפיצה)
-  // ✅ משאירים את הטבלה ומציגים overlay בזמן טעינה
   return (
     <div style={{ position: "relative", minHeight: 360 }}>
       {error && (
@@ -313,8 +305,6 @@ export default function WorkersTable() {
         emptyMessage="אין עובדים להצגה"
         rowKey="id"
         containerSx={{ maxWidth: 1000, mx: "auto" }}
-        // אם ל-BaseTable יש API ל-styles של ה-table, שווה לקבע:
-        // tableProps={{ sx: { tableLayout: "fixed" } }}
         toolbar={
           <WorkersToolbar
             query={query}

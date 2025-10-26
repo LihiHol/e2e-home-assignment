@@ -41,11 +41,10 @@ export default function CreateEntityForm({
 
   const onSubmit = async (formData) => {
     try {
-      // אם יש apiService – נשתמש בו, אחרת בקונטקסט
       if (apiService) {
         await apiService(formData);
       } else {
-        await createWorker(formData); // ⬅️ קריאה דרך הקונטקסט
+        await createWorker(formData); 
       }
 
       enqueueSnackbar(successMessage || "נשמר בהצלחה", { variant: "success" });

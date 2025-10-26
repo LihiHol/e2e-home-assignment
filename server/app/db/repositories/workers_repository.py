@@ -5,6 +5,23 @@ from pymongo.errors import DuplicateKeyError
 
 from app.db.mongo import workers
 
+# def _serialize(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+#     """Convert Mongo document to API-friendly dict (stringify _id -> id)."""
+#     if not doc:
+#         return None
+#     doc = dict(doc)
+#     _id = doc.pop("_id", None)
+#     if _id:
+#         doc["id"] = str(_id)
+#     return doc
+
+
+# def _obj_id(id_str: str) -> ObjectId:
+#     """Safe ObjectId constructor with nice errors."""
+#     try:
+#         return ObjectId(id_str)
+#     except Exception:
+#         raise ValueError("Invalid id")
 
 class WorkersRepository:
     """

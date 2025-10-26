@@ -1,4 +1,3 @@
-// src/components/ui/table/BaseTableHead.jsx
 import React from "react";
 import { TableHead, TableRow, TableCell } from "@mui/material";
 
